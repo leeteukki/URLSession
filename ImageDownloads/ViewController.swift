@@ -21,11 +21,12 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
     
     
     @IBAction func downLoadAction(_ sender: Any) {
+        indicator.startAnimating()
         
         let sessionConfiguration = URLSessionConfiguration.default
         let session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
         
-        downloadTask = session.downloadTask(with: URL(string: "https://raw.githubsercontent.com/ChoiJinYoung/iphonewithswift2/master/sample.jpeg")!)
+        downloadTask = session.downloadTask(with: URL(string: "https://raw.githubusercontent.com/ChoiJinYoung/iphonewithswift2/master/sample.jpeg")!)
         downloadTask.resume()
     }
    
@@ -35,8 +36,11 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
     }
     */
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        
         let tempData: Data = try! Data(contentsOf: location)
         self.imageView.image = UIImage(data: tempData)
+        
+        indicator.startAnimating()
     }
     
     
