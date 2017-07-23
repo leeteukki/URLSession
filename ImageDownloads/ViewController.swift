@@ -21,8 +21,10 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
     
     
     @IBAction func downLoadAction(_ sender: Any) {
-        indicator.startAnimating()
+        self.imageView.image = nil
+        self.progressView.setProgress(0.0, animated: false)
         
+        indicator.startAnimating()
         let sessionConfiguration = URLSessionConfiguration.default
         let session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
         
@@ -30,28 +32,38 @@ class ViewController: UIViewController, URLSessionDownloadDelegate {
         downloadTask.resume()
     }
    
-    /*
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
-        <#code#>
+    
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        
+        let tempProgress:Float = Float(totalBytesWritten)/Float(totalBytesExpectedToWrite)
+        
+        self.progressView.setProgress(tempProgress, animated: true)
+        
     }
-    */
+    
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         
         let tempData: Data = try! Data(contentsOf: location)
         self.imageView.image = UIImage(data: tempData)
         
-        indicator.startAnimating()
+        indicator.stopAnimating()
+        
     }
     
     
     
     @IBAction func stopAction(_ sender: Any) {
+        downloadTask.suspend()
     }
   
     @IBAction func reStartAction(_ sender: Any) {
+        downloadTask.resume()
     }
     
     @IBAction func cancelAction(_ sender: Any) {
+        downloadTask.cancel(
+            self.progressView.setProgress(0.0, animated: false))
+        indicator.stopAnimating()
     }
     
     override func viewDidLoad() {
