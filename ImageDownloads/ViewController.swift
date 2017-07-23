@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, URLSessionDownloadDelegate {
 
     @IBOutlet var imageView: UIImageView!
     
@@ -17,9 +17,29 @@ class ViewController: UIViewController {
     @IBOutlet var progressView: UIProgressView!
     
     
+    var downloadTask : URLSessionDownloadTask!
+    
     
     @IBAction func downLoadAction(_ sender: Any) {
+        
+        let sessionConfiguration = URLSessionConfiguration.default
+        let session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
+        
+        downloadTask = session.downloadTask(with: URL(string: "https://raw.githubsercontent.com/ChoiJinYoung/iphonewithswift2/master/sample.jpeg")!)
+        downloadTask.resume()
     }
+   
+    /*
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
+        <#code#>
+    }
+    */
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        let tempData: Data = try! Data(contentsOf: location)
+        self.imageView.image = UIImage(data: tempData)
+    }
+    
+    
     
     @IBAction func stopAction(_ sender: Any) {
     }
